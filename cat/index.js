@@ -17,7 +17,8 @@ const normal = [
     866680587,//圣·自习室
     747648670,//猫猫群
     280247691,//旅行者的聚集地
-    774097408//锦里の五月三
+    774097408,//锦里の五月三
+    830513395//小屋
 ];
 const mute = [
     966164395,//{$}｜闲聊群
@@ -96,6 +97,26 @@ function randomFile(dir) {
     return path.resolve(dir, getFileList[Math.round(Math.random() * getFileList.length)]);
 }
 
+const botUse = {
+    reply: ["签到",
+        "戳一戳",
+        "涩涩",
+        "不可以涩涩",
+        "一言",
+        "来点锦里",],
+    code: ["获取头像 QQ号(number)",
+        "获取群头像 群号(number)",
+        "运行 js (code)",
+        "群资料 人数(以及其他)",
+        "群文件 已有数量(以及其他)",],
+    textReply: [
+        "草",
+        segment.face(277),
+        segment.face(178),
+        segment.face(2),
+    ]
+}
+
 //群聊消息
 bot.on("message.group", function (msg) {
     //msg.group.markRead();
@@ -155,9 +176,10 @@ bot.on("message.group", function (msg) {
                         msg.group.sendMsg(signSend);
                         sign[String(msg.group_id)][String(msg.member.user_id)][1] = num;
                         if (num >= 90) {
-                            msg.group.sendMsg(fromCqcode(
-                                "[CQ:image,type=image,file=9ef80aa35536b958cf91ad2a14438a546975-198-132.jpg,url=https://gchat.qpic.cn/gchatpic_new/2241051890/966164395-3007860911-9EF80AA35536B958CF91AD2A14438A54/0?term=2,asface=false]"
-                            ));
+                            msg.group.sendMsg(segment.image("https://gchat.qpic.cn/gchatpic_new/2241051890/966164395-3007860911-9EF80AA35536B958CF91AD2A14438A54/0?term=2,asface=false"));
+                        }
+                        else if (num <= 20) {
+                            msg.group.sendMsg(segment.image("https://gchat.qpic.cn/gchatpic_new/2241051890/765730405-2371465024-812523D171544CBD7B28C9AD5E476B50/0?term=2,asface=false"));
                         }
                     }
                     sign[String(msg.group_id)][String(msg.member.user_id)][0] = new Date();
@@ -297,7 +319,7 @@ bot.on("message.group", function (msg) {
                         }
                     }
                     else {
-                        send = "指令参数错误！\n请使用「获取头像 群号(number)」";
+                        send = "指令参数错误！\n请使用「获取群头像 群号(number)」";
                     }
                     msg.group.sendMsg(send);
                 }
@@ -488,6 +510,27 @@ bot.on("message.group", function (msg) {
                 }
                 else if (msg.raw_message.includes("操你") || msg.raw_message.includes("草你")) {
                     msg.group.sendMsg(["啊~慢点", segment.face(66)]);
+                }
+                else if (msg.raw_message.includes("让我看看") || msg.raw_message.includes("让我康康")) {
+                    let send = ["以下是已有的指令\n"];
+                    let any;
+                    send.push("\n可直接回应：\n");
+                    any = botUse.reply;
+                    for (let i = 0; i < any.length; i++) {
+                        send.push("「", any[i], "」", "\n");
+                    }
+                    send.push("\n指令，带有参数：\n");
+                    any = botUse.code;
+                    for (let i = 0; i < any.length; i++) {
+                        send.push("「", any[i], "」", "\n");
+                    }
+                    send.push("\n可回应：\n");
+                    any = botUse.textReply;
+                    for (let i = 0; i < any.length; i++) {
+                        send.push("「", any[i], "」", "\n");
+                    }
+                    send.push("指令中括号内为描述，无需带上括号\n");
+                    msg.group.sendMsg(send);
                 }
                 else {
                     msg.group.sendMsg(fromCqcode("[CQ:bface,type=bface,file=28319f9281772c62cc158ade881b291a35303865326636333064363732363633209209,text=嘿]"));
